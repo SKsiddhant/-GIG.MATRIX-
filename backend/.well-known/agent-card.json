@@ -52,12 +52,12 @@
     "registry": "zns01.zynd.ai",
     "status": "online",
     "category": "general",
-    "lastUpdatedAt": "2026-05-10T05:29:42.037Z"
+    "lastUpdatedAt": "2026-05-10T06:00:28.178Z"
   },
   "signatures": [
     {
       "protected": "eyJhbGciOiJFZERTQSIsInR5cCI6ImFnZW50LWNhcmQramNzK2p3cyJ9",
-      "signature": "SPIg6loFhQZa8BfinduQ0o5IaXkFsTDiSU_38LRA29HSzAvbHuEq0tmvK_4YckEHxyrxvO-PC75Q-Cf51Rf6DQ",
+      "signature": "DKgh_mK-g3GFaeSN5mCsWMYm-MgHGsyckm2x1V59FpLnvVUkQ6wmpH0HqiSHYBTg3DsftqsCjexKUot_DqCiBg",
       "header": {
         "kid": "ed25519:RtA3hgSKdR/o/0+tetRTOVP0zfFf2P+T3lQ3fKjWvE4="
       }
