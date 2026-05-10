@@ -1,0 +1,66 @@
+{
+  "protocolVersion": "0.3.0",
+  "name": "Gig-Hunter Coordinator",
+  "description": "Orchestrates lead finding and evaluation.",
+  "version": "0.1.0",
+  "url": "http://localhost:5001/a2a/v1",
+  "preferredTransport": "JSONRPC",
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": true,
+    "stateTransitionHistory": false
+  },
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "skills": [
+    {
+      "id": "default",
+      "name": "Gig-Hunter Coordinator",
+      "description": "Orchestrates lead finding and evaluation.",
+      "inputModes": [
+        "text/plain",
+        "application/json"
+      ],
+      "outputModes": [
+        "text/plain",
+        "application/json"
+      ]
+    }
+  ],
+  "securitySchemes": {
+    "zyndSig": {
+      "type": "http",
+      "scheme": "ed25519-envelope",
+      "description": "Per-message Ed25519 signature in Message.metadata['x-zynd-auth']. See zynd-a2a-communication spec."
+    }
+  },
+  "security": [
+    {
+      "zyndSig": []
+    }
+  ],
+  "x-zynd": {
+    "version": 1,
+    "entityId": "zns:986eadd5508df1125267686f4952e6bb",
+    "publicKey": "ed25519:RtA3hgSKdR/o/0+tetRTOVP0zfFf2P+T3lQ3fKjWvE4=",
+    "registry": "zns01.zynd.ai",
+    "status": "online",
+    "category": "general",
+    "lastUpdatedAt": "2026-05-10T05:29:42.037Z"
+  },
+  "signatures": [
+    {
+      "protected": "eyJhbGciOiJFZERTQSIsInR5cCI6ImFnZW50LWNhcmQramNzK2p3cyJ9",
+      "signature": "SPIg6loFhQZa8BfinduQ0o5IaXkFsTDiSU_38LRA29HSzAvbHuEq0tmvK_4YckEHxyrxvO-PC75Q-Cf51Rf6DQ",
+      "header": {
+        "kid": "ed25519:RtA3hgSKdR/o/0+tetRTOVP0zfFf2P+T3lQ3fKjWvE4="
+      }
+    }
+  ]
+}
