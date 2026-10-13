@@ -64,7 +64,7 @@ Copilot was our **lead architect's right hand**. It was used to:
     npm test
     ```
     Without real keys the backend uses built-in mock leads and mock workflow ids.
-3.  **Frontend**: the dashboard (`web/`) is **not part of this repository** (it was never committed). The backend exposes `GET /api/leads` and `POST /api/ingest`, and allows the origins in `CORS_ORIGINS` (default `http://localhost:3000`).
+3.  **Frontend**: the dashboard (`web/`) is **not part of this repository** (it was never committed). The backend exposes `GET /api/leads` and `POST /api/ingest`, and allows the origins in `CORS_ORIGINS` (default `http://localhost:3000`). Set `INGEST_API_KEY` to require an `x-api-key` header on `POST /api/ingest` (it triggers paid third-party calls).
 
 ---
 

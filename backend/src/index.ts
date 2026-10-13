@@ -16,6 +16,7 @@ const app = createApp(
     superplane: new SuperplaneService(process.env.SUPERPLANE_API_KEY || ''),
   },
   corsOrigins,
+  process.env.INGEST_API_KEY || undefined,
 );
 
 app.listen(port, () => {

@@ -11,7 +11,7 @@ export interface Services {
 
 export const QUALIFY_THRESHOLD = 70;
 
-export function createApp(services: Services, corsOrigins: string[] = ['http://localhost:3000']) {
+export function createApp(services: Services, corsOrigins: string[] = ['http://localhost:3000'], ingestApiKey?: string) {
   const app = express();
 
   // Previously a hand-written `Access-Control-Allow-Origin: *`; the `cors` package was installed but unused.
@@ -26,7 +26,11 @@ export function createApp(services: Services, corsOrigins: string[] = ['http://l
     res.json(leads);
   });
 
-  app.post('/api/ingest', async (_req, res) => {
+  app.post('/api/ingest', async (req, res) => {
+    // Ingest triggers paid third-party calls. When INGEST_API_KEY is configured, callers must send it as `x-api-key`.
+    if (ingestApiKey && req.get('x-api-key') !== ingestApiKey) {
+      return res.status(401).json({ error: 'Missing or invalid x-api-key.' });
+    }
     // Each ingest calls paid third-party APIs and mutates the shared list; overlapping runs used to
     // double-process the same leads.
     if (ingesting) return res.status(409).json({ error: 'An ingestion is already running.' });

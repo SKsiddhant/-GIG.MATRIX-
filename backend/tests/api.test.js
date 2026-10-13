@@ -70,3 +70,18 @@ test('CORS only allows configured origins', async () => {
   assert.equal(evil.headers.get('access-control-allow-origin'), null);
   close();
 });
+
+test('ingest requires x-api-key when INGEST_API_KEY is configured', async () => {
+  const services = {
+    apify: { ingestLeads: async () => [] },
+    zynd: { evaluateLead: async () => { throw new Error('unused'); } },
+    superplane: { triggerLeadWorkflow: async () => 'x' },
+  };
+  const server = createApp(services, undefined, 'secret').listen(0);
+  const base = `http://localhost:${server.address().port}`;
+  try {
+    assert.equal((await fetch(`${base}/api/ingest`, { method: 'POST' })).status, 401);
+    assert.equal((await fetch(`${base}/api/ingest`, { method: 'POST', headers: { 'x-api-key': 'wrong' } })).status, 401);
+    assert.equal((await fetch(`${base}/api/ingest`, { method: 'POST', headers: { 'x-api-key': 'secret' } })).status, 200);
+  } finally { server.close(); }
+});
