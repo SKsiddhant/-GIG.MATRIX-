@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { createHash, timingSafeEqual } from 'crypto';
 import { GigLead, AgentEvaluation } from './shared/types';
 
 // The services are injected so the HTTP layer can be tested without Apify / Zynd / Superplane.
@@ -7,6 +8,13 @@ export interface Services {
   apify: { ingestLeads(): Promise<GigLead[]> };
   zynd: { evaluateLead(lead: GigLead): Promise<AgentEvaluation & { proposal?: string; research?: string; networkLogs: string[] }> };
   superplane: { triggerLeadWorkflow(lead: GigLead, evaluation: AgentEvaluation): Promise<string> };
+}
+
+// Constant-time comparison of two secrets (hashing first makes the buffers equal length).
+function safeEqual(a: string, b: string): boolean {
+  const ha = createHash('sha256').update(a).digest();
+  const hb = createHash('sha256').update(b).digest();
+  return timingSafeEqual(ha, hb);
 }
 
 export const QUALIFY_THRESHOLD = 70;
@@ -28,7 +36,7 @@ export function createApp(services: Services, corsOrigins: string[] = ['http://l
 
   app.post('/api/ingest', async (req, res) => {
     // Ingest triggers paid third-party calls. When INGEST_API_KEY is configured, callers must send it as `x-api-key`.
-    if (ingestApiKey && req.get('x-api-key') !== ingestApiKey) {
+    if (ingestApiKey && !safeEqual(req.get('x-api-key') ?? '', ingestApiKey)) {
       return res.status(401).json({ error: 'Missing or invalid x-api-key.' });
     }
     // Each ingest calls paid third-party APIs and mutates the shared list; overlapping runs used to
