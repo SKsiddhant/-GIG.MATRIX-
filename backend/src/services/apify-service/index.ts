@@ -29,13 +29,13 @@ export class ApifyService {
 
     try {
       console.log(`[ApifyService] Fetching results from dataset: ${targetDatasetId}`);
-      const datasetItems = await this.client.dataset(targetDatasetId).listItems();
+      const datasetItems = await this.client.dataset(targetDatasetId).listItems({ limit: 100 }); // bounded: each lead triggers several API calls
       
       return datasetItems.items.map((item: any) => ({
         id: uuidv4(),
         title: item.title || item.jobTitle || 'Untitled Lead',
         description: item.description || item.jobDescription || item.text || 'No description provided.',
-        budget: item.budget || item.price || item.hourlyRate || 'TBD',
+        budget: String(item.budget || item.price || item.hourlyRate || 'TBD'),
         platform: item.platform || 'Apify Scraper',
         url: item.url || item.link || '',
         createdAt: item.createdAt || new Date().toISOString(),

@@ -7,6 +7,12 @@ import {
 } from 'zyndai';
 import { v4 as uuidv4 } from 'uuid';
 
+function titleHash(s: string): number {
+  let h = 0;
+  for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return h;
+}
+
 interface LeadScoringPersona {
   idealKeywords: string[];
   minimumBudget: number;
@@ -78,6 +84,7 @@ export class ZyndService {
     
     let initialScore = 0;
     let initialReasoning = '';
+    let scored = false; // a remote agent can legitimately return 0; don't treat that as "no score"
 
     // 2. Evaluation Phase
     try {
@@ -99,8 +106,9 @@ export class ZyndService {
 
         try {
           const result = JSON.parse(response);
-          initialScore = result.score || 50;
+          initialScore = Number.isFinite(result.score) ? result.score : 50;
           initialReasoning = result.reasoning || 'Agent evaluation successful.';
+          scored = true;
         } catch (e) {
           logs.push(`[${coordinatorId}] WARNING: Failed to parse A2A response. Falling back to internal engine.`);
         }
@@ -111,7 +119,7 @@ export class ZyndService {
       logs.push(`[${coordinatorId}] ERROR: A2A Communication failed. Switching to fail-safe mode.`);
     }
 
-    if (initialScore === 0) {
+    if (!scored) {
       const local = this.calculateLocalScore(lead);
       initialScore = local.score;
       initialReasoning = local.reasoning;
@@ -120,14 +128,16 @@ export class ZyndService {
     // 3. Consensus Phase
     if (initialScore > 70) {
       logs.push(`[${coordinatorId}] INITIATING Consensus Phase for high-value lead.`);
-      const verificationBonus = Math.random() > 0.2 ? 5 : -15; 
+      // SIMULATED: there is no second agent behind this step. The outcome is derived from the lead title
+      // (stable per lead; it used to be Math.random(), so re-ingesting the same lead could flip its result).
+      const verificationBonus = titleHash(lead.title) % 5 === 0 ? -15 : 5;
       initialScore += verificationBonus;
       
       if (verificationBonus > 0) {
-        logs.push(`[zns:consensus] CONSENSUS REACHED: Lead verified. Score boosted to ${initialScore}%.`);
+        logs.push(`[zns:consensus] CONSENSUS REACHED (simulated): Lead verified. Score boosted to ${initialScore}%.`);
         initialReasoning += ' | Verified by Consensus Agent: Confirmed high strategic value.';
       } else {
-        logs.push(`[zns:consensus] CONSENSUS FAILED: Potential risks identified by verifier.`);
+        logs.push(`[zns:consensus] CONSENSUS FAILED (simulated): Potential risks identified by verifier.`);
         initialReasoning += ' | Verification Warning: Consensus agent flags potential risk.';
       }
     }
@@ -136,7 +146,7 @@ export class ZyndService {
       leadId: lead.id,
       score: Math.max(0, Math.min(initialScore, 100)),
       reasoning: initialReasoning,
-      recommendedAction: initialScore > 70 ? 'Proceed to Superplane Workflow' : 'Archive',
+      recommendedAction: Math.max(0, Math.min(initialScore, 100)) > 70 ? 'Proceed to Superplane Workflow' : 'Archive',
       research,
       networkLogs: logs,
     };

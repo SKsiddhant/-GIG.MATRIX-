@@ -1,0 +1,9 @@
+# Secrets - never commit real keys. Copy backend/.env.example to backend/.env
+.env
+.env.*
+!.env.example
+
+# Dependencies and build output
+node_modules/
+dist/
+*.log

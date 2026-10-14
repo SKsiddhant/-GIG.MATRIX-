@@ -13,7 +13,7 @@ A decentralized swarm of specialized agents:
 1.  **The Scraper (Apify)**: Scans the web for new opportunities across Upwork, LinkedIn, Twitter, and more.
 2.  **The Researcher (Zynd AI)**: Performs deep market analysis and client history checks.
 3.  **The Evaluator (Zynd AI)**: Scores leads based on a custom technical persona and budget thresholds.
-4.  **The Consensus Agent (Zynd AI)**: Verifies high-value leads to prevent false positives.
+4.  **The Consensus Agent (simulated)**: A placeholder step that nudges the score of high-value leads up or down. There is no second agent behind it yet.
 5.  **The Orchestrator (Superplane)**: Manages the human-in-the-loop approval and engagement workflow.
 
 ---
@@ -59,16 +59,12 @@ Copilot was our **lead architect's right hand**. It was used to:
     ```bash
     cd backend
     npm install
-    # Update .env with your keys
-    npm run dev
+    cp .env.example .env   # then add your keys; .env is git-ignored
+    npm run dev            # or: npm run build && npm start
+    npm test
     ```
-3.  **Frontend**:
-    ```bash
-    cd web
-    npm install
-    npm run dev
-    ```
-4.  **Launch**: Visit `http://localhost:3000`
+    Without real keys the backend uses built-in mock leads and mock workflow ids.
+3.  **Frontend**: the dashboard (`web/`) is **not part of this repository** (it was never committed). The backend exposes `GET /api/leads` and `POST /api/ingest`, and allows the origins in `CORS_ORIGINS` (default `http://localhost:3000`). Set `INGEST_API_KEY` to require an `x-api-key` header on `POST /api/ingest` (it triggers paid third-party calls).
 
 ---
 
